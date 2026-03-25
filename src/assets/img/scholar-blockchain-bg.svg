@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B2447"/>
+      <stop offset="1" stop-color="#19376D"/>
+    </linearGradient>
+    <linearGradient id="node" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#4FC3F7"/>
+      <stop offset="1" stop-color="#7C4DFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <g opacity="0.2" stroke="#9AD1FF" stroke-width="2">
+    <path d="M180 200L420 130L670 240L950 150L1220 260L1450 180"/>
+    <path d="M150 520L390 430L620 540L860 450L1140 560L1400 470"/>
+    <path d="M200 760L460 670L720 760L980 680L1240 770L1460 700"/>
+  </g>
+  <g fill="url(#node)">
+    <rect x="380" y="90" width="90" height="90" rx="14"/>
+    <rect x="620" y="195" width="90" height="90" rx="14"/>
+    <rect x="900" y="105" width="90" height="90" rx="14"/>
+    <rect x="1170" y="215" width="90" height="90" rx="14"/>
+    <rect x="360" y="390" width="90" height="90" rx="14"/>
+    <rect x="590" y="500" width="90" height="90" rx="14"/>
+    <rect x="830" y="410" width="90" height="90" rx="14"/>
+    <rect x="1110" y="520" width="90" height="90" rx="14"/>
+  </g>
+  <g fill="#E3F2FD" opacity="0.9">
+    <path d="M785 306L640 372L785 438L930 372L785 306Z"/>
+    <path d="M675 401V474C675 504 729 528 785 528C841 528 895 504 895 474V401L785 451L675 401Z"/>
+  </g>
+  <g opacity="0.25" stroke="#B3E5FC" stroke-width="2">
+    <line x1="425" y1="180" x2="665" y2="240"/>
+    <line x1="705" y1="240" x2="945" y2="180"/>
+    <line x1="985" y1="180" x2="1215" y2="260"/>
+    <line x1="405" y1="480" x2="635" y2="530"/>
+    <line x1="675" y1="530" x2="875" y2="470"/>
+    <line x1="915" y1="470" x2="1155" y2="560"/>
+  </g>
+</svg>

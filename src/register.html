@@ -165,7 +165,7 @@
 
     function addIpfsFileAsync(ipfs, buffer) {
       return new Promise(function(resolve, reject) {
-        ipfs.files.add(buffer, function(error, result) {
+        addIpfsFile(ipfs, buffer, function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -225,7 +225,7 @@ Age: ${age}
 Public Key: ${publicKey}`;
         const buffer = Buffer.from(userData);
         const result = await addIpfsFileAsync(ipfs, buffer);
-        const ipfsHash = result[0].hash;
+        const ipfsHash = extractIpfsHash(result);
 
         await addAgentOnChainAsync(name, age, designation, ipfsHash, publicKey);
 

@@ -59,6 +59,81 @@ function normalizeAddressList(addresses) {
   });
 }
 
+function toDisplayUint(value) {
+  if (value === undefined || value === null) {
+    return "";
+  }
+  if (typeof value === "object" && typeof value.toString === "function") {
+    return value.toString(10);
+  }
+  return String(value);
+}
+
+function extractIpfsHash(result) {
+  if (!result) {
+    return "";
+  }
+  var first = Array.isArray(result) ? result[0] : result;
+  if (!first) {
+    return "";
+  }
+  return first.hash || first.path || (first.cid && first.cid.toString && first.cid.toString()) || "";
+}
+
+function addIpfsFile(ipfs, buffer, callback) {
+  if (ipfs && ipfs.files && typeof ipfs.files.add === "function") {
+    ipfs.files.add(buffer, callback);
+    return;
+  }
+  if (ipfs && typeof ipfs.add === "function") {
+    ipfs.add(buffer, callback);
+    return;
+  }
+  callback(new Error("IPFS add API is unavailable"));
+}
+
+function callContractRead(preferredMethod, fallbackMethod, args, options, callback) {
+  var params = (args || []).slice();
+  params.push(options || {});
+  params.push(function(error, result) {
+    if (!error || !fallbackMethod || !contractInstance[fallbackMethod]) {
+      callback(error, result);
+      return;
+    }
+
+    var fallbackParams = (args || []).slice();
+    fallbackParams.push(options || {});
+    fallbackParams.push(callback);
+    contractInstance[fallbackMethod].call.apply(contractInstance[fallbackMethod], fallbackParams);
+  });
+
+  contractInstance[preferredMethod].call.apply(contractInstance[preferredMethod], params);
+}
+
+function getStudentOnChain(addr, options, callback) {
+  callContractRead("get_student", "get_patient", [addr], options, callback);
+}
+
+function getTeacherOnChain(addr, options, callback) {
+  callContractRead("get_teacher", "get_doctor", [addr], options, callback);
+}
+
+function getStudentListOnChain(options, callback) {
+  callContractRead("get_student_list", "get_patient_list", [], options, callback);
+}
+
+function getTeacherListOnChain(options, callback) {
+  callContractRead("get_teacher_list", "get_doctor_list", [], options, callback);
+}
+
+function getAccessedTeacherListForStudentOnChain(addr, options, callback) {
+  callContractRead("get_accessed_teacherlist_for_student", "get_accessed_doctorlist_for_patient", [addr], options, callback);
+}
+
+function getAccessedStudentListForTeacherOnChain(addr, options, callback) {
+  callContractRead("get_accessed_studentlist_for_teacher", "get_accessed_patientlist_for_doctor", [addr], options, callback);
+}
+
 function getCurrentAccount() {
   if (window.ethereum && window.ethereum.selectedAddress) {
     return window.ethereum.selectedAddress;
