@@ -4,48 +4,48 @@ pragma solidity ^0.5.1;
     
     uint256 private constant ACCESS_FEE = 2 ether;
 
-     struct patient {
+     struct student {
          string name;
         uint256 age;
-         address[] doctorAccessList;
+         address[] teacherAccessList;
         uint256[] diagnosis;
          string record;
      }
     
 
-     struct doctor {
+     struct teacher {
          string name;
         uint256 age;
-         address[] patientAccessList;
+         address[] studentAccessList;
      }
 
     uint256 public creditPool;
  
-     address[] public patientList;
-     address[] public doctorList;
+     address[] public studentList;
+     address[] public teacherList;
  
-     mapping (address => patient) patientInfo;
-     mapping (address => doctor) doctorInfo;
+     mapping (address => student) studentInfo;
+     mapping (address => teacher) teacherInfo;
      mapping (address => address) Empty;    
  
     event AgentAdded(address indexed agent, uint256 designation, string name, uint256 age);
-    event AccessPermitted(address indexed patientAddr, address indexed doctorAddr, uint256 valueWei);
-    event AccessRevoked(address indexed patientAddr, address indexed doctorAddr, uint256 valueWei);
-    event RecordHashUpdated(address indexed patientAddr, string recordHash, address indexed updatedBy);
-    event InsuranceClaimProcessed(address indexed patientAddr, address indexed doctorAddr, uint256 diagnosis);
+    event AccessPermitted(address indexed studentAddr, address indexed teacherAddr, uint256 valueWei);
+    event AccessRevoked(address indexed studentAddr, address indexed teacherAddr, uint256 valueWei);
+    event RecordHashUpdated(address indexed studentAddr, string recordHash, address indexed updatedBy);
+    event InsuranceClaimProcessed(address indexed studentAddr, address indexed teacherAddr, uint256 diagnosis);
 
-    modifier onlyPatient(address addr) {
-        require(bytes(patientInfo[addr].name).length > 0, "Patient not registered");
+    modifier onlyStudent(address addr) {
+        require(bytes(studentInfo[addr].name).length > 0, "Student not registered");
         _;
     }
 
-    modifier onlyDoctor(address addr) {
-        require(bytes(doctorInfo[addr].name).length > 0, "Doctor not registered");
+    modifier onlyTeacher(address addr) {
+        require(bytes(teacherInfo[addr].name).length > 0, "Teacher not registered");
         _;
     }
 
-    modifier onlyLinked(address paddr, address daddr) {
-        require(hasAccess(paddr, daddr), "Patient-doctor access link missing");
+    modifier onlyLinked(address saddr, address taddr) {
+        require(hasAccess(saddr, taddr), "Student-teacher access link missing");
         _;
     }
  
@@ -53,24 +53,24 @@ pragma solidity ^0.5.1;
          address addr = msg.sender;        
         require(bytes(_name).length > 0, "Name required");
         require(_age > 0, "Age required");
-        require(bytes(patientInfo[addr].name).length == 0 && bytes(doctorInfo[addr].name).length == 0, "Already registered");
+        require(bytes(studentInfo[addr].name).length == 0 && bytes(teacherInfo[addr].name).length == 0, "Already registered");
 
          if(_designation == 0){
-            patient storage p = patientInfo[addr];
+            student storage p = studentInfo[addr];
              p.name = _name;
              p.age = _age;
              p.record = _hash;
-            patientList.push(addr);
+            studentList.push(addr);
             emit AgentAdded(addr, _designation, _name, _age);
             emit RecordHashUpdated(addr, _hash, msg.sender);
              return _name;
          }
 
         if (_designation == 1){
-            doctor storage d = doctorInfo[addr];
+            teacher storage d = teacherInfo[addr];
             d.name = _name;
             d.age = _age;
-            doctorList.push(addr);
+            teacherList.push(addr);
             emit AgentAdded(addr, _designation, _name, _age);
              return _name;
 
@@ -81,58 +81,58 @@ pragma solidity ^0.5.1;
      }
  
  
-    function get_patient(address addr) view public returns (string memory , uint256, uint256[] memory , address, string memory ){
-         return (patientInfo[addr].name, patientInfo[addr].age, patientInfo[addr].diagnosis, Empty[addr], patientInfo[addr].record);
+    function get_student(address addr) view public returns (string memory , uint256, uint256[] memory , address, string memory ){
+         return (studentInfo[addr].name, studentInfo[addr].age, studentInfo[addr].diagnosis, Empty[addr], studentInfo[addr].record);
      }
  
-    function get_doctor(address addr) view public returns (string memory , uint256){
-         return (doctorInfo[addr].name, doctorInfo[addr].age);
+    function get_teacher(address addr) view public returns (string memory , uint256){
+         return (teacherInfo[addr].name, teacherInfo[addr].age);
      }
 
-     function get_patient_doctor_name(address paddr, address daddr) view public returns (string memory , string memory ){
-         return (patientInfo[paddr].name,doctorInfo[daddr].name);
+     function get_student_teacher_name(address saddr, address taddr) view public returns (string memory , string memory ){
+         return (studentInfo[saddr].name,teacherInfo[taddr].name);
      }
  
-    function permit_access(address addr) payable public onlyPatient(msg.sender) onlyDoctor(addr) {
+    function permit_access(address addr) payable public onlyStudent(msg.sender) onlyTeacher(addr) {
         require(msg.value == ACCESS_FEE, "Access fee must be 2 ether");
         require(!hasAccess(msg.sender, addr), "Access already granted");
 
         creditPool += ACCESS_FEE;
 
-        doctorInfo[addr].patientAccessList.push(msg.sender);
-        patientInfo[msg.sender].doctorAccessList.push(addr);
+        teacherInfo[addr].studentAccessList.push(msg.sender);
+        studentInfo[msg.sender].teacherAccessList.push(addr);
 
         emit AccessPermitted(msg.sender, addr, ACCESS_FEE);
      }
  
-    function set_hash_public (address paddr, string memory _hash) public onlyPatient(paddr) {
-        require(msg.sender == paddr || hasAccess(paddr, msg.sender), "Only patient or authorized doctor");
-         set_hash(paddr, _hash);
+    function set_hash_public (address saddr, string memory _hash) public onlyStudent(saddr) {
+        require(msg.sender == saddr || hasAccess(saddr, msg.sender), "Only student or authorized teacher");
+         set_hash(saddr, _hash);
      }
  
-    // must be called by doctor linked to patient
-    function insurance_claimm(address paddr, uint256 _diagnosis, string memory  _hash) public onlyDoctor(msg.sender) onlyPatient(paddr) onlyLinked(paddr, msg.sender) {
+    // must be called by teacher linked to student
+    function insurance_claimm(address saddr, uint256 _diagnosis, string memory  _hash) public onlyTeacher(msg.sender) onlyStudent(saddr) onlyLinked(saddr, msg.sender) {
         require(creditPool >= ACCESS_FEE, "Insufficient credit pool");
 
         creditPool -= ACCESS_FEE;
         msg.sender.transfer(ACCESS_FEE);
 
-        set_hash(paddr, _hash);
-        remove_patient_internal(paddr, msg.sender);
+        set_hash(saddr, _hash);
+        remove_student_internal(saddr, msg.sender);
 
         bool diagnosisFound = false;
-        for(uint256 j = 0; j < patientInfo[paddr].diagnosis.length; j++){
-            if(patientInfo[paddr].diagnosis[j] == _diagnosis) {
+        for(uint256 j = 0; j < studentInfo[saddr].diagnosis.length; j++){
+            if(studentInfo[saddr].diagnosis[j] == _diagnosis) {
                 diagnosisFound = true;
                 break;
              }
          }
  
         if (!diagnosisFound) {
-            patientInfo[paddr].diagnosis.push(_diagnosis);
+            studentInfo[saddr].diagnosis.push(_diagnosis);
         }
 
-        emit InsuranceClaimProcessed(paddr, msg.sender, _diagnosis);
+        emit InsuranceClaimProcessed(saddr, msg.sender, _diagnosis);
      }
  
     function remove_element_in_array(address[] storage arrayData, address addr) internal
@@ -154,63 +154,63 @@ pragma solidity ^0.5.1;
         arrayData.length--;
     }
 
-    function remove_patient(address paddr, address daddr) public onlyLinked(paddr, daddr) {
+    function remove_student(address saddr, address taddr) public onlyLinked(saddr, taddr) {
         require(
-            msg.sender == paddr || msg.sender == daddr,
-            "Only linked patient or doctor can remove"
+            msg.sender == saddr || msg.sender == taddr,
+            "Only linked student or teacher can remove"
         );
 
-        remove_patient_internal(paddr, daddr);
+        remove_student_internal(saddr, taddr);
      }
  
-    function remove_patient_internal(address paddr, address daddr) internal {
-         remove_element_in_array(doctorInfo[daddr].patientAccessList, paddr);
-         remove_element_in_array(patientInfo[paddr].doctorAccessList, daddr);
+    function remove_student_internal(address saddr, address taddr) internal {
+         remove_element_in_array(teacherInfo[taddr].studentAccessList, saddr);
+         remove_element_in_array(studentInfo[saddr].teacherAccessList, taddr);
      }    
 
-    function hasAccess(address paddr, address daddr) public view returns (bool) {
-        for (uint256 i = 0; i < doctorInfo[daddr].patientAccessList.length; i++) {
-            if (doctorInfo[daddr].patientAccessList[i] == paddr) {
+    function hasAccess(address saddr, address taddr) public view returns (bool) {
+        for (uint256 i = 0; i < teacherInfo[taddr].studentAccessList.length; i++) {
+            if (teacherInfo[taddr].studentAccessList[i] == saddr) {
                 return true;
             }
         }
         return false;
     }
 
-     function get_accessed_doctorlist_for_patient(address addr) public view returns (address[] memory )
+     function get_accessed_teacherlist_for_student(address addr) public view returns (address[] memory )
     {
-        return patientInfo[addr].doctorAccessList;
+        return studentInfo[addr].teacherAccessList;
      }
 
-     function get_accessed_patientlist_for_doctor(address addr) public view returns (address[] memory )
+     function get_accessed_studentlist_for_teacher(address addr) public view returns (address[] memory )
      {
-         return doctorInfo[addr].patientAccessList;
+         return teacherInfo[addr].studentAccessList;
      }
 
-    function revoke_access(address daddr) public onlyPatient(msg.sender) onlyDoctor(daddr) onlyLinked(msg.sender, daddr){
+    function revoke_access(address taddr) public onlyStudent(msg.sender) onlyTeacher(taddr) onlyLinked(msg.sender, taddr){
         require(creditPool >= ACCESS_FEE, "Insufficient credit pool");
 
-        remove_patient_internal(msg.sender,daddr);
+        remove_student_internal(msg.sender,taddr);
         creditPool -= ACCESS_FEE;
         msg.sender.transfer(ACCESS_FEE);
 
-        emit AccessRevoked(msg.sender, daddr, ACCESS_FEE);
+        emit AccessRevoked(msg.sender, taddr, ACCESS_FEE);
      }
  
-     function get_patient_list() public view returns(address[] memory ){
-         return patientList;
+     function get_student_list() public view returns(address[] memory ){
+         return studentList;
      }
  
-     function get_doctor_list() public view returns(address[] memory ){
-         return doctorList;
+     function get_teacher_list() public view returns(address[] memory ){
+         return teacherList;
      }
  
-     function get_hash(address paddr) public view returns(string memory ){
-         return patientInfo[paddr].record;
+     function get_hash(address saddr) public view returns(string memory ){
+         return studentInfo[saddr].record;
      }
  
-     function set_hash(address paddr, string memory _hash) internal {
-         patientInfo[paddr].record = _hash;
-         emit RecordHashUpdated(paddr, _hash, msg.sender);
+     function set_hash(address saddr, string memory _hash) internal {
+         studentInfo[saddr].record = _hash;
+         emit RecordHashUpdated(saddr, _hash, msg.sender);
      }
  }
