@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>ArogyaBlock | Doctor</title>
+    <title>Scholar Trust | Teacher</title>
     <script src="js/bundle.js"></script>
 
     <!-- Fonts -->
@@ -46,7 +46,7 @@
                 <a href="index.html" class="logo d-flex align-items-center me-auto">
                     <!-- Uncomment the line below if you also wish to use an image logo -->
                     <!-- <img src="assets/img/logo.png" alt=""> -->
-                    <h1 class="sitename">ArogyaBlock</h1>
+                    <h1 class="sitename">Scholar Trust</h1>
                   </a>
                   <a class="cta-btn d-none d-sm-block" href="./index.html">Logout</a>
             </div>
@@ -96,15 +96,15 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="alert alert-danger">
-                        <strong>Notice!</strong> Could not access records. Access might have been revoked. Contact admin or patient.
+                        <strong>Notice!</strong> Could not access records. Access might have been revoked. Contact admin or student.
                     </div>
                 </div>
                 <div class="row">
                     <div class="">
-                        <table id="viewPatient" class="table">
+                        <table id="viewStudent" class="table">
                             <tr>
-                                <th>Patient</th>
-                                <th class="publicKeyPatient">Public Key</th>
+                                <th>Student</th>
+                                <th class="publicKeyStudent">Public Key</th>
                                 <th>Action</th>
                             </tr>
                         </table>
@@ -173,7 +173,7 @@
 
         var a = 0;
         var b = 0;
-        contractInstance.get_doctor.call(key, {gas: 1000000},function(error, result){
+        contractInstance.get_teacher.call(key, {gas: 1000000},function(error, result){
             if(!error){
                 a = result[0]; 
                 b = result[1];
@@ -185,16 +185,16 @@
             else
                 console.error(error);
         });
-        var patientAddressList = 0;
+        var studentAddressList = 0;
 
-        contractInstance.get_accessed_patientlist_for_doctor(key, {gas: 1000000}, function(error, result){
+        contractInstance.get_accessed_studentlist_for_teacher(key, {gas: 1000000}, function(error, result){
             if(!error){
-                patientAddressList = result;
+                studentAddressList = result;
                 console.log(result);
 
-                patientAddressList.forEach(function(patientAddress, index){
-                    contractInstance.get_patient.call(patientAddress, {gas: 1000000}, function(error, result){
-                        var table = document.getElementById("viewPatient");
+                studentAddressList.forEach(function(studentAddress, index){
+                    contractInstance.get_student.call(studentAddress, {gas: 1000000}, function(error, result){
+                        var table = document.getElementById("viewStudent");
                         if(!error) {
                             [a,b] = result;
                             console.log(a);
@@ -203,9 +203,9 @@
                             var cell1 = row.insertCell(0);
                             var cell2 = row.insertCell(1);
                             var cell3 = row.insertCell(2);
-                            cell2.className = "publicKeyPatient";
+                            cell2.className = "publicKeyStudent";
                             cell1.innerHTML = a;
-                            cell2.innerHTML = patientAddress;
+                            cell2.innerHTML = studentAddress;
                             cell3.innerHTML = '<input class="cta-btn" style="border-radius:50px;" onclick="showRecords(this)" id="viewRecordsButton" type="button" value="View records"></input>';
 
                             
@@ -223,19 +223,19 @@
         
     function showRecords(element){
 
-        var table = document.getElementById("viewPatient");
+        var table = document.getElementById("viewStudent");
         var index = element.parentNode.parentNode.rowIndex;
-        var patientAddress = table.rows[index].cells[1].innerHTML;
+        var studentAddress = table.rows[index].cells[1].innerHTML;
 
         if (toggleRecordsButton%2 == 0){
 
-            var patientRecord = ""
+            var studentRecord = ""
             
-            contractInstance.get_hash(patientAddress, {gas: 1000000}, function(error, result){
+            contractInstance.get_hash(studentAddress, {gas: 1000000}, function(error, result){
                 if(!error){
 
                     $.get("http://localhost:8080/ipfs/"+result, function(data){
-                        patientRecord = data;
+                        studentRecord = data;
                         const match = data.match(/Symptomes\s*:\s*(.+?)\s*[-]/g);
                         if (match) {
                             // Extract the last match and remove "Symptomes :" from it
@@ -245,10 +245,10 @@
                             console.log("Symptomes Array", sym);
                         }
                         content = `<div style="padding: 40px; width: 100%; margin: auto; font-family: poppins; border: 2px solid #1977cc; border-radius: 10px; background-color: #1977cc10; color:#2c4964;">
-                        <div id="view${patientAddress}">
+                        <div id="view${studentAddress}">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <pre style="margin: 20px 0;" id="records${patientAddress}">${patientRecord}</pre>
+                                        <pre style="margin: 20px 0;" id="records${studentAddress}">${studentRecord}</pre>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -258,7 +258,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-2"><label for="ailmentsList" class="control-label">Diagnosis:</label></div>
                                                     <div class="col-sm-10">
-                                                        <select class="form-control" id="ailmentsList${patientAddress}" style="width:inherit;" required>
+                                                        <select class="form-control" id="ailmentsList${studentAddress}" style="width:inherit;" required>
                                                             <option selected disabled>-- Please Select --</option>
                                                             <option value="0">(vertigo) Paroymsal Positional Vertigo</option>
                                                             <option value="1">AIDS</option>
@@ -322,9 +322,9 @@
                                             
                                         </div>
                                         <br>
-                                        <div class="alert alert-success" id="patientFriendlySummary`+patientAddress+`" style="display:none; margin-bottom: 15px;">
-                                            <strong>AI summary for patient:</strong>
-                                            <p id="patientFriendlySummaryText`+patientAddress+`" style="margin-top:10px; white-space: pre-line;"></p>
+                                        <div class="alert alert-success" id="studentFriendlySummary`+studentAddress+`" style="display:none; margin-bottom: 15px;">
+                                            <strong>AI summary for student:</strong>
+                                            <p id="studentFriendlySummaryText`+studentAddress+`" style="margin-top:10px; white-space: pre-line;"></p>
                                         </div>
                                         <div class="form-group" style="align-item:centre; margin-left:80px">
                                                 <button class="cta-btn btn-block" onclick = "submitDiagnosis2(this,`+index+`)">Submit</button>
@@ -380,16 +380,16 @@
 
     function submitDiagnosis(element,index)
     {
-        var table = document.getElementById("viewPatient");
-        var patientAddress = table.rows[index].cells[1].innerHTML;
+        var table = document.getElementById("viewStudent");
+        var studentAddress = table.rows[index].cells[1].innerHTML;
       
-        console.log(patientAddress);
-        var diagnosis = $("#ailmentsList"+patientAddress).val();
+        console.log(studentAddress);
+        var diagnosis = $("#ailmentsList"+studentAddress).val();
         diagnosis = parseInt(diagnosis);
         var diagnosed = ailmentsDict[diagnosis];
         var comments = document.querySelector("#details").value;
 
-        var oldRecords = $("#records"+patientAddress).html();
+        var oldRecords = $("#records"+studentAddress).html();
 
         var newRecords = 
 `Diagnosed By : ${docName}
@@ -410,7 +410,7 @@ Comments : ${comments}
                     console.log(error)
                 }else{
                     ipfshash = result[0].hash;
-                    contractInstance.insurance_claimm(patientAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
+                    contractInstance.insurance_claimm(studentAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
                         if(!error){
                             alert("Your diagnosis has been submitted.");
                             // delete content row
@@ -432,7 +432,7 @@ Comments : ${comments}
         }
     }
 
-    async function getSimplifiedDiagnosisForPatient(payload) {
+    async function getSimplifiedDiagnosisForStudent(payload) {
         try {
             const response = await fetch(getSimplifiedDiagnosisApiUrl(), {
                 method: 'POST',
@@ -457,27 +457,27 @@ Comments : ${comments}
 
     async function submitDiagnosis2(element,index)
     {
-        var table = document.getElementById("viewPatient");
-        var patientAddress = table.rows[index].cells[1].innerHTML;
+        var table = document.getElementById("viewStudent");
+        var studentAddress = table.rows[index].cells[1].innerHTML;
       
-        console.log(patientAddress);
-        var diagnosis = $("#ailmentsList"+patientAddress).val();
+        console.log(studentAddress);
+        var diagnosis = $("#ailmentsList"+studentAddress).val();
         diagnosis = parseInt(diagnosis);
         var diagnosed = ailmentsDict[diagnosis];
         var comments = document.querySelector("#details").value;
 
         
         try{
-            var oldRecords = $("#records"+patientAddress).html();
-            const simplifiedDiagnosis = await getSimplifiedDiagnosisForPatient({
+            var oldRecords = $("#records"+studentAddress).html();
+            const simplifiedDiagnosis = await getSimplifiedDiagnosisForStudent({
                 diagnosis: diagnosed,
                 comments: comments,
                 symptoms: global_sym
             });
 
             if (simplifiedDiagnosis) {
-                $("#patientFriendlySummaryText" + patientAddress).text(simplifiedDiagnosis);
-                $("#patientFriendlySummary" + patientAddress).show();
+                $("#studentFriendlySummaryText" + studentAddress).text(simplifiedDiagnosis);
+                $("#studentFriendlySummary" + studentAddress).show();
             }
 
             var newRecords = 
@@ -485,7 +485,7 @@ Comments : ${comments}
 Diagnosis Time : ${getDateTime()}
 Diagnosis : ${diagnosed}
 Comments : ${comments}
-Simplified Summary For Patient: ${simplifiedDiagnosis || "Unavailable"}
+Simplified Summary For Student: ${simplifiedDiagnosis || "Unavailable"}
 -------------------------------------------------
 `
 
@@ -500,7 +500,7 @@ Simplified Summary For Patient: ${simplifiedDiagnosis || "Unavailable"}
                     console.log(error)
                 }else{
                     ipfshash = result[0].hash;
-                    contractInstance.insurance_claimm(patientAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
+                    contractInstance.insurance_claimm(studentAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
                         if(!error){
                             alert("Your diagnosis has been submitted.");
                             // delete content row
