@@ -13,19 +13,19 @@ var DEFAULT_AGENT_CONTRACT_ADDRESS = "0x51554AC424A0db2B29b26b9520cD7D2Fc5F470FD
 var CONTRACT_ABI = [
   {"constant":false,"inputs":[{"name":"_name","type":"string"},{"name":"_age","type":"uint256"},{"name":"_designation","type":"uint256"},{"name":"_hash","type":"string"}],"name":"add_agent","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"nonpayable","type":"function"},
   {"constant":false,"inputs":[{"name":"addr","type":"address"}],"name":"permit_access","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},
-  {"constant":false,"inputs":[{"name":"daddr","type":"address"}],"name":"revoke_access","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
-  {"constant":false,"inputs":[{"name":"paddr","type":"address"},{"name":"_diagnosis","type":"uint256"},{"name":"_hash","type":"string"}],"name":"insurance_claimm","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
-  {"constant":false,"inputs":[{"name":"paddr","type":"address"},{"name":"_hash","type":"string"}],"name":"set_hash_public","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
-  {"constant":false,"inputs":[{"name":"paddr","type":"address"},{"name":"daddr","type":"address"}],"name":"remove_patient","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
-  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_patient","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"},{"name":"","type":"uint256[]"},{"name":"","type":"address"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_doctor","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[],"name":"get_patient_list","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[],"name":"get_doctor_list","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_accessed_doctorlist_for_patient","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_accessed_patientlist_for_doctor","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"paddr","type":"address"}],"name":"get_hash","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"paddr","type":"address"},{"name":"daddr","type":"address"}],"name":"get_patient_doctor_name","outputs":[{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
-  {"constant":true,"inputs":[{"name":"paddr","type":"address"},{"name":"daddr","type":"address"}],"name":"hasAccess","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"}
+  {"constant":false,"inputs":[{"name":"taddr","type":"address"}],"name":"revoke_access","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+  {"constant":false,"inputs":[{"name":"saddr","type":"address"},{"name":"_diagnosis","type":"uint256"},{"name":"_hash","type":"string"}],"name":"insurance_claimm","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+  {"constant":false,"inputs":[{"name":"saddr","type":"address"},{"name":"_hash","type":"string"}],"name":"set_hash_public","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+  {"constant":false,"inputs":[{"name":"saddr","type":"address"},{"name":"taddr","type":"address"}],"name":"remove_student","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},
+  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_student","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"},{"name":"","type":"uint256[]"},{"name":"","type":"address"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_teacher","outputs":[{"name":"","type":"string"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[],"name":"get_student_list","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[],"name":"get_teacher_list","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_accessed_teacherlist_for_student","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"get_accessed_studentlist_for_teacher","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"saddr","type":"address"}],"name":"get_hash","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"saddr","type":"address"},{"name":"taddr","type":"address"}],"name":"get_student_teacher_name","outputs":[{"name":"","type":"string"},{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},
+  {"constant":true,"inputs":[{"name":"saddr","type":"address"},{"name":"taddr","type":"address"}],"name":"hasAccess","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"}
 ];
 
 function resolveContractAddress() {

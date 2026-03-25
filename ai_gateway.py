@@ -41,14 +41,14 @@ def _json_response(payload, status=200):
 def _fallback_preliminary(symptoms, intensity):
     return (
         f'Possible condition pattern based on symptoms ({symptoms}) with {intensity} intensity. '
-        'This is not a final diagnosis. Doctor should verify with examination, history, and tests.'
+        'This is not a final diagnosis. Teacher should verify with examination, history, and tests.'
     )
 
 
 def _fallback_simplified(diagnosis, comments):
     return (
-        f'Your doctor suspects: {diagnosis}. {comments}. '
-        'In simple terms: this matches your reported symptoms, but your doctor will confirm it '
+        f'Your teacher suspects: {diagnosis}. {comments}. '
+        'In simple terms: this matches your reported symptoms, but your teacher will confirm it '
         'using examination and tests.'
     )
 
@@ -224,8 +224,8 @@ def preliminary_diagnosis():
     intensity = payload.get('intensity', 'unknown')
 
     system_prompt = (
-        'You are a clinical triage assistant. Provide a concise preliminary diagnosis for doctors. '
-        'Always mention that this is not final and requires doctor confirmation.'
+        'You are a clinical triage assistant. Provide a concise preliminary diagnosis for teachers. '
+        'Always mention that this is not final and requires teacher confirmation.'
     )
     user_prompt = f'Symptoms: {symptoms}\nIntensity: {intensity}\nReturn 2-3 sentences.'
 
@@ -250,11 +250,11 @@ def simplify_diagnosis():
     symptoms = payload.get('symptoms', '')
 
     system_prompt = (
-        'You simplify doctor diagnosis into patient-friendly language at grade 6-8 reading level. '
-        'Avoid jargon and avoid giving treatment that contradicts doctor.'
+        'You simplify teacher diagnosis into student-friendly language at grade 6-8 reading level. '
+        'Avoid jargon and avoid giving treatment that contradicts teacher.'
     )
     user_prompt = (
-        f'Doctor diagnosis: {diagnosis}\nDoctor comments: {comments}\n'
+        f'Teacher diagnosis: {diagnosis}\nTeacher comments: {comments}\n'
         f'Reported symptoms: {symptoms}\nReturn 3 short bullet-like lines in plain text.'
     )
 

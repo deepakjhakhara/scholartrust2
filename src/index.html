@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>ArogyaBlock</title>
+  <title>Scholar Trust</title>
   <script src="js/bundle.js"></script>
   <meta content="" name="description">
   <meta content="" name="keywords">
@@ -36,7 +36,7 @@
     <div class="branding d-flex align-items-center">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="index.html" class="logo d-flex align-items-center me-auto">
-          <h1 class="sitename">ArogyaBlock</h1>
+          <h1 class="sitename">Scholar Trust</h1>
         </a>
         <nav id="navmenu" class="navmenu">
           <ul>
@@ -54,7 +54,7 @@
       <img src="assets/img/hero-bg.jpg" alt="" data-aos="fade-in">
       <div class="container position-relative">
         <div class="welcome position-relative" data-aos="fade-down" data-aos-delay="100">
-          <h2>Welcome to ArogyaBlock</h2>
+          <h2>Welcome to Scholar Trust</h2>
           <div class="row">
             <div class="alert alert-warning col-sm-8 col-sm-offset-2" style="display: none;">
                 <strong>Warning!</strong> Unregistered user. Click <a href="./register.html">here</a> to register. 
@@ -95,9 +95,9 @@
 
     connect().catch(function(error){ console.error(error); $(".alert-warning").show(); });
 
-    function getPatientListAsync() {
+    function getStudentListAsync() {
       return new Promise(function(resolve, reject) {
-        contractInstance.get_patient_list(function(error, result) {
+        contractInstance.get_student_list(function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -107,9 +107,9 @@
       });
     }
 
-    function getDoctorListAsync() {
+    function getTeacherListAsync() {
       return new Promise(function(resolve, reject) {
-        contractInstance.get_doctor_list(function(error, result) {
+        contractInstance.get_teacher_list(function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -139,14 +139,14 @@
         var normalizedKey = normalizeAddress(publicKey);
 
         try {
-            var patientList = normalizeAddressList(await getPatientListAsync());
-            if (patientList.indexOf(normalizedKey) !== -1) {
-                location.href = "./patient.html?key=" + publicKey;
+            var studentList = normalizeAddressList(await getStudentListAsync());
+            if (studentList.indexOf(normalizedKey) !== -1) {
+                location.href = "./student.html?key=" + publicKey;
                 return;
             }
-            var doctorList = normalizeAddressList(await getDoctorListAsync());
-            if (doctorList.indexOf(normalizedKey) !== -1) {
-                location.href = "./doctor.html?key=" + publicKey;
+            var teacherList = normalizeAddressList(await getTeacherListAsync());
+            if (teacherList.indexOf(normalizedKey) !== -1) {
+                location.href = "./teacher.html?key=" + publicKey;
                 return;
             }
         } catch (error) {

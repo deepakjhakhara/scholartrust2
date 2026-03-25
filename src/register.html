@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>ArogyaBlock | Register</title>
+  <title>Scholar Trust | Register</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -40,7 +40,7 @@
     <div class="branding d-flex align-items-center">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="index.html" class="logo d-flex align-items-center me-auto">
-          <h1 class="sitename">ArogyaBlock</h1>
+          <h1 class="sitename">Scholar Trust</h1>
         </a>
         <nav id="navmenu" class="navmenu">
           <ul>
@@ -90,8 +90,8 @@
                 <label for="designation">Registering as:</label>
                 <select name="Designation" id="designation" class="form-select" required>
                   <option value="" disabled selected>-- Please Select --</option>
-                  <option value="0">Patient</option>
-                  <option value="1">Doctor</option>
+                  <option value="0">Student</option>
+                  <option value="1">Teacher</option>
                 </select>
               </div>
               <div class="text-center mt-4">
@@ -139,9 +139,9 @@
       });
     });
 
-    function getPatientListAsync() {
+    function getStudentListAsync() {
       return new Promise(function(resolve, reject) {
-        contractInstance.get_patient_list({ gas: 1000000 }, function(error, result) {
+        contractInstance.get_student_list({ gas: 1000000 }, function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -151,9 +151,9 @@
       });
     }
 
-    function getDoctorListAsync() {
+    function getTeacherListAsync() {
       return new Promise(function(resolve, reject) {
-        contractInstance.get_doctor_list({ gas: 1000000 }, function(error, result) {
+        contractInstance.get_teacher_list({ gas: 1000000 }, function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -208,10 +208,10 @@
           throw new Error("No wallet account selected");
         }
 
-        const patientList = normalizeAddressList(await getPatientListAsync());
-        const doctorList = normalizeAddressList(await getDoctorListAsync());
+        const studentList = normalizeAddressList(await getStudentListAsync());
+        const teacherList = normalizeAddressList(await getTeacherListAsync());
 
-        if (patientList.includes(publicKey) || doctorList.includes(publicKey)) {
+        if (studentList.includes(publicKey) || teacherList.includes(publicKey)) {
           $("#warning-alert").hide();
           $("#info-alert").show();
           return;
@@ -230,9 +230,9 @@ Public Key: ${publicKey}`;
         await addAgentOnChainAsync(name, age, designation, ipfsHash, publicKey);
 
         if (designation === 0) {
-          window.location.href = "./patient.html?key=" + publicKey;
+          window.location.href = "./student.html?key=" + publicKey;
         } else if (designation === 1) {
-          window.location.href = "./doctor.html?key=" + publicKey;
+          window.location.href = "./teacher.html?key=" + publicKey;
         }
       } catch (error) {
         console.error(error);
