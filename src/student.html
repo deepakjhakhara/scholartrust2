@@ -29,7 +29,7 @@
     <link href="assets/css/main.css" rel="stylesheet">
 </head>
 
-<body style="background: #eef3f8 url('assets/img/scholar-blockchain-bg.svg') center/cover fixed no-repeat;">
+<body >
 
         <!-- Navigation -->
         <header id="header" class="header sticky-top" style="box-shadow: 0px 0px 10px 8px #1977cc15;">
@@ -310,7 +310,7 @@ populateDropdowns();
         $("#records").hide();
         $(".alert-info").hide();
         $(".alert-danger").hide();
-        key = (window.ethereum && window.ethereum.selectedAddress) || (web3.eth.accounts && web3.eth.accounts[0]) || url.searchParams.get("key");
+        key = (window.ethereum && window.ethereum.selectedAddress) || (web3.eth.accounts && web3.eth.accounts[0]);
         key = key.toLocaleLowerCase();
 
         var a = "";
@@ -324,7 +324,7 @@ populateDropdowns();
         
         // print student details
         console.log("Getting Student Data");
-        getStudentOnChain(key, {gas: 1000000}, function(error, result){
+        contractInstance.get_student.call(key, {gas: 1000000}, function(error, result){
             console.log("Student Data Result:"+result);
             if(!error){
                 console.log(result);
@@ -334,7 +334,7 @@ populateDropdowns();
                 ailments = result[2];
                 recordHash = result[4];
                 $("#name").html(a);
-                $("#age").html(toDisplayUint(b));
+                $("#age").html(b.c[0]);
                 $("#recordsHash").html(recordHash);
                 pname=a;
             }
@@ -345,7 +345,7 @@ populateDropdowns();
         // print out the teachers to share emr
         var TeacherList = 0;
         console.log("Getting Teacher List");
-        getTeacherListOnChain({gas: 1000000},function(error, result){
+        contractInstance.get_teacher_list({gas: 1000000},function(error, result){
 
             if(!error) {
 
@@ -353,7 +353,7 @@ populateDropdowns();
 
                 for(var i = 0; i < TeacherList.length; i++) {
                     (function(teacherAddress) {
-                        getTeacherOnChain(teacherAddress, {gas: 1000000},function(error, result){
+                        contractInstance.get_teacher.call(teacherAddress, {gas: 1000000},function(error, result){
 
                             var list = document.getElementById("permitTeacherList");
 
@@ -377,14 +377,14 @@ populateDropdowns();
 
         // print out the teachers who have access
         var teacherAddressList = 0;
-        getAccessedTeacherListForStudentOnChain(key, {gas: 1000000}, function(error, result){
+        contractInstance.get_accessed_teacherlist_for_student(key, {gas: 1000000}, function(error, result){
             if(!error){
                 teacherAddressList = result;
                 // console.log(result);
                 
                
                 teacherAddressList.forEach(function(teacherAddress, index){
-                    getTeacherOnChain(teacherAddress, {gas: 1000000}, function(error, result){
+                    contractInstance.get_teacher.call(teacherAddress, {gas: 1000000}, function(error, result){
                         var table = document.getElementById("accessDoc");
                         if(!error) {
                             [a,b] = result;
@@ -563,20 +563,16 @@ AI Preliminary Diagnosis : ${aiPreliminary || "Unavailable"}
 
         if (!isNaN(diagnosis)){
             console.log("Innn");
-            var buffer = Buffer.from(updatedRecords);
+            var buffer = Buffer(updatedRecords);
 
-            addIpfsFile(ipfs, buffer, (error, result) => {
+            ipfs.files.add(buffer, (error, result) => {
                 if(error){
                     console.log("Hereeee");
                     console.log(error)
                 }else{
                     console.log("goood");
-                    ipfshash = extractIpfsHash(result);
-                    if (!ipfshash) {
-                        $(".alert-danger").show();
-                        return;
-                    }
-                    contractInstance.set_hash_public(key, ipfshash, {from: key, gas: 1000000}, function(error, result){
+                    ipfshash = result[0].hash;
+                    contractInstance.set_hash_public(key, ipfshash, {gas: 1000000}, function(error, result){
                         if(!error){
                             alert("Your symptomes has been submitted.");
                             // // delete content row

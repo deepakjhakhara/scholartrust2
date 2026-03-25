@@ -97,7 +97,7 @@
 
     function getStudentListAsync() {
       return new Promise(function(resolve, reject) {
-        getStudentListOnChain({}, function(error, result) {
+        contractInstance.get_student_list(function(error, result) {
           if (error) {
             reject(error);
             return;
@@ -109,7 +109,7 @@
 
     function getTeacherListAsync() {
       return new Promise(function(resolve, reject) {
-        getTeacherListOnChain({}, function(error, result) {
+        contractInstance.get_teacher_list(function(error, result) {
           if (error) {
             reject(error);
             return;

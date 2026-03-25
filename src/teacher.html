@@ -168,18 +168,18 @@
         }
         $(".alert-danger").hide();
         
-        key = (window.ethereum && window.ethereum.selectedAddress) || (web3.eth.accounts && web3.eth.accounts[0]) || url.searchParams.get("key");
+        key = (window.ethereum && window.ethereum.selectedAddress) || (web3.eth.accounts && web3.eth.accounts[0]);
         key = key.toLocaleLowerCase();
 
         var a = 0;
         var b = 0;
-        getTeacherOnChain(key, {gas: 1000000},function(error, result){
+        contractInstance.get_teacher.call(key, {gas: 1000000},function(error, result){
             if(!error){
                 a = result[0]; 
                 b = result[1];
                 docName = a;
                 $("#name").html(a);
-                $("#age").html(toDisplayUint(b));
+                $("#age").html(b.c[0]);
             }
                 
             else
@@ -187,13 +187,13 @@
         });
         var studentAddressList = 0;
 
-        getAccessedStudentListForTeacherOnChain(key, {gas: 1000000}, function(error, result){
+        contractInstance.get_accessed_studentlist_for_teacher(key, {gas: 1000000}, function(error, result){
             if(!error){
                 studentAddressList = result;
                 console.log(result);
 
                 studentAddressList.forEach(function(studentAddress, index){
-                    getStudentOnChain(studentAddress, {gas: 1000000}, function(error, result){
+                    contractInstance.get_student.call(studentAddress, {gas: 1000000}, function(error, result){
                         var table = document.getElementById("viewStudent");
                         if(!error) {
                             [a,b] = result;
@@ -403,17 +403,13 @@ Comments : ${comments}
         
         if (!isNaN(diagnosis)){
 
-            var buffer = Buffer.from(updatedRecords);
+            var buffer = Buffer(updatedRecords);
 
-            addIpfsFile(ipfs, buffer, (error, result) => {
+            ipfs.files.add(buffer, (error, result) => {
                 if(error){
                     console.log(error)
                 }else{
-                    ipfshash = extractIpfsHash(result);
-                    if (!ipfshash) {
-                        $(".alert-danger").show();
-                        return;
-                    }
+                    ipfshash = result[0].hash;
                     contractInstance.insurance_claimm(studentAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
                         if(!error){
                             alert("Your diagnosis has been submitted.");
@@ -497,17 +493,13 @@ Simplified Summary For Student: ${simplifiedDiagnosis || "Unavailable"}
         
         if (!isNaN(diagnosis)){
 
-            var buffer = Buffer.from(updatedRecords);
+            var buffer = Buffer(updatedRecords);
 
-            addIpfsFile(ipfs, buffer, (error, result) => {
+            ipfs.files.add(buffer, (error, result) => {
                 if(error){
                     console.log(error)
                 }else{
-                    ipfshash = extractIpfsHash(result);
-                    if (!ipfshash) {
-                        $(".alert-danger").show();
-                        return;
-                    }
+                    ipfshash = result[0].hash;
                     contractInstance.insurance_claimm(studentAddress, diagnosis, ipfshash, {gas: 1000000}, function(error, result){
                         if(!error){
                             alert("Your diagnosis has been submitted.");
